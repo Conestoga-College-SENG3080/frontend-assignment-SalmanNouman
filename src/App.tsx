@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { login, type LoginResponse } from "./services/api";
+import { Header } from "./components/Header";
 
 function App() {
   const [auth, setAuth] = useState<LoginResponse | null>(null);
@@ -27,15 +28,14 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Creddit App</h1>
+      {auth && <Header token={auth.access_token} />}
+      {!auth && !error && <p>Authenticating...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {auth ? (
-        <div>
-          <p>Authenticated! Token: {auth.access_token.substring(0, 10)}...</p>
-          <p>Check console for more details.</p>
+      {auth && (
+        <div style={{ padding: "0 20px" }}>
+          <p>Logged in as {auth.user.username}</p>
+          <p>Forum content placeholder.</p>
         </div>
-      ) : (
-        <p>Authenticating...</p>
       )}
     </div>
   );
