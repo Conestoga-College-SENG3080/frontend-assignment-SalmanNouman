@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import { login, type LoginResponse } from "./services/api";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [auth, setAuth] = useState<LoginResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Hardcoded credentials as per discussed in class
+    const USERNAME = "snouman0011";
+    const PASSWORD = "8861331";
+
+    const performLogin = async () => {
+      try {
+        console.log("Attempting login for:", USERNAME);
+        const data = await login(USERNAME, PASSWORD);
+        setAuth(data);
+        console.log("Login successful, token received");
+      } catch (err) {
+        console.error("Login error:", err);
+        setError("Failed to authenticate with Creddit API");
+      }
+    };
+
+    performLogin();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app-container">
+      <h1>Creddit App</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {auth ? (
+        <div>
+          <p>Authenticated! Token: {auth.access_token.substring(0, 10)}...</p>
+          <p>Check console for more details.</p>
+        </div>
+      ) : (
+        <p>Authenticating...</p>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
