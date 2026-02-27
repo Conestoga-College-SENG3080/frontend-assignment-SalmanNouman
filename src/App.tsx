@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { login, type LoginResponse } from "./services/api";
 import { Header } from "./components/Header";
 import { ForumSelector } from "./components/ForumSelector";
+import { PostList } from "./components/PostList";
 
 function App() {
   const [auth, setAuth] = useState<LoginResponse | null>(null);
@@ -43,8 +44,7 @@ function App() {
           ) : (
             <div>
               <button onClick={() => setSelectedForum(null)}>← Back to Search</button>
-              <h3>Viewing r/{selectedForum}</h3>
-              <p>Post list will go here.</p>
+              <PostList token={auth.access_token} forumSlug={selectedForum} />
             </div>
           )}
         </div>

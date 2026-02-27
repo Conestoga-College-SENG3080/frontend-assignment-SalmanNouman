@@ -48,6 +48,16 @@ export interface ForumDto {
   description: string;
 }
 
+export interface PostDto {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  createdAt: string;
+  totalLikes: number;
+  totalRead: number;
+}
+
 export const searchForums = async (token: string, query: string): Promise<ForumDto[]> => {
   const response = await fetch(`${API_URL}/forums/search?q=${encodeURIComponent(query)}`, {
     headers: {
@@ -57,6 +67,25 @@ export const searchForums = async (token: string, query: string): Promise<ForumD
 
   if (!response.ok) {
     throw new Error('Failed to search forums');
+  }
+
+  return response.json();
+};
+
+export const getPostsByForum = async (
+  token: string,
+  slug: string,
+  sortBy: string = 'hot',
+  limit: number = 10
+): Promise<PostDto[]> => {
+  const response = await fetch(`${API_URL}/forums/${slug}?sortBy=${sortBy}&limit=${limit}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch posts');
   }
 
   return response.json();
