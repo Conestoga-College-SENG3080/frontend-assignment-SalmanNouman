@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPostsByForum, type PostDto } from "../services/api";
 import { PostItem } from "./PostItem";
+import { useFavorites } from "../hooks/useFavorites";
 
 interface PostListProps {
   token: string;
@@ -11,6 +12,7 @@ export const PostList = ({ token, forumSlug }: PostListProps) => {
   const [posts, setPosts] = useState<PostDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -41,7 +43,14 @@ export const PostList = ({ token, forumSlug }: PostListProps) => {
       {posts.length === 0 ? (
         <p>No posts found in this forum.</p>
       ) : (
-        posts.map((post) => <PostItem key={post.id} post={post} />)
+        posts.map((post) => (
+          <PostItem
+            key={post.id}
+            post={post}
+            isFavorite={isFavorite(post.id)}
+            onToggleFavorite={toggleFavorite}
+          />
+        ))
       )}
     </div>
   );
