@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { getPostsByIds, type PostDto } from "../services/api";
+import { usePosts } from "../hooks/usePosts";
 import { PostItem } from "./PostItem";
 import { useFavorites } from "../hooks/useFavorites";
 
@@ -8,32 +7,11 @@ interface FavoritesViewProps {
 }
 
 export const FavoritesView = ({ token }: FavoritesViewProps) => {
-  const [posts, setPosts] = useState<PostDto[]>([]);
-  const [loading, setLoading] = useState(false);
   const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
-
-  useEffect(() => {
-    const fetchFavoritePosts = async () => {
-      if (favoriteIds.length === 0) {
-        setPosts([]);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const data = await getPostsByIds(token, favoriteIds);
-        setPosts(data);
-      } catch (err) {
-        console.error("Fetch favorite posts error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFavoritePosts();
-  }, [token, favoriteIds]);
+  const { posts, loading, error } = usePosts(token, undefined, favoriteIds);
 
   if (loading) return <p>Loading your favorites...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div style={{ marginTop: "20px" }}>

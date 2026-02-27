@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { getPostsByForum, type PostDto } from "../services/api";
+import { usePosts } from "../hooks/usePosts";
 import { PostItem } from "./PostItem";
 import { useFavorites } from "../hooks/useFavorites";
 
@@ -9,30 +8,8 @@ interface PostListProps {
 }
 
 export const PostList = ({ token, forumSlug }: PostListProps) => {
-  const [posts, setPosts] = useState<PostDto[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { posts, loading, error } = usePosts(token, forumSlug);
   const { isFavorite, toggleFavorite } = useFavorites();
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getPostsByForum(token, forumSlug, "hot", 10);
-        setPosts(data);
-      } catch (err) {
-        console.error("Fetch posts error:", err);
-        setError("Failed to load posts for this forum.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (forumSlug) {
-      fetchPosts();
-    }
-  }, [token, forumSlug]);
 
   if (loading) return <p>Loading posts...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;

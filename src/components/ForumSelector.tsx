@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { searchForums, type ForumDto } from "../services/api";
+import { useForums } from "../hooks/useForums";
 
 interface ForumSelectorProps {
   token: string;
@@ -8,28 +8,15 @@ interface ForumSelectorProps {
 
 export const ForumSelector = ({ token, onSelectForum }: ForumSelectorProps) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ForumDto[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { results, loading, error, search } = useForums(token);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.length < 3) return;
-
-    setLoading(true);
-    try {
-      const data = await searchForums(token, query);
-      setResults(data);
-    } catch (err) {
-      console.error("Search error:", err);
-    } finally {
-      setLoading(false);
-    }
+    search(query);
   };
 
   return (
-    <div
-      style={{ padding: "20px", border: "1px solid #eee", borderRadius: "8px" }}
-    >
+    <div style={{ padding: "20px", border: "1px solid #eee", borderRadius: "8px" }}>
       <h3>Find a Forum</h3>
       <form onSubmit={handleSearch}>
         <input
@@ -39,15 +26,13 @@ export const ForumSelector = ({ token, onSelectForum }: ForumSelectorProps) => {
           placeholder="e.g. funny, news..."
           style={{ padding: "8px", width: "200px" }}
         />
-        <button
-          type="submit"
-          style={{ padding: "8px 16px", marginLeft: "8px" }}
-        >
+        <button type="submit" style={{ padding: "8px 16px", marginLeft: "8px" }}>
           Search
         </button>
       </form>
 
       {loading && <p>Searching...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <ul style={{ listStyle: "none", padding: 0, marginTop: "10px" }}>
         {results.map((forum) => (
@@ -55,8 +40,8 @@ export const ForumSelector = ({ token, onSelectForum }: ForumSelectorProps) => {
             <button
               onClick={() => onSelectForum(forum.slug)}
               style={{
-                background: "#4800ff",
-                border: "1px solid #ffffff",
+                background: "#f0f0f0",
+                border: "1px solid #ccc",
                 padding: "4px 8px",
                 cursor: "pointer",
                 width: "100%",
@@ -68,7 +53,7 @@ export const ForumSelector = ({ token, onSelectForum }: ForumSelectorProps) => {
           </li>
         ))}
       </ul>
-      {results.length === 0 && !loading && query.length >= 3 && (
+      {results.length === 0 && !loading && query.length >= 3 && !error && (
         <p>No forums found for "{query}"</p>
       )}
     </div>
