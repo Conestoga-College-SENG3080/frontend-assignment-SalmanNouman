@@ -90,3 +90,20 @@ export const getPostsByForum = async (
 
   return response.json();
 };
+
+export const getPostsByIds = async (token: string, ids: string[]): Promise<PostDto[]> => {
+  const response = await fetch(`${API_URL}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ids }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch favorite posts');
+  }
+
+  return response.json();
+};

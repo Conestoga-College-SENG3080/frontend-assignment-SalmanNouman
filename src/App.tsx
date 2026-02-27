@@ -3,11 +3,13 @@ import { login, type LoginResponse } from "./services/api";
 import { Header } from "./components/Header";
 import { ForumSelector } from "./components/ForumSelector";
 import { PostList } from "./components/PostList";
+import { FavoritesView } from "./components/FavoritesView";
 
 function App() {
   const [auth, setAuth] = useState<LoginResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedForum, setSelectedForum] = useState<string | null>(null);
+  const [currentTab, setCurrentTab] = useState<"explore" | "favorites">("explore");
 
   useEffect(() => {
     // Hardcoded credentials as per discussed in class
@@ -36,16 +38,41 @@ function App() {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {auth && (
         <div style={{ padding: "0 20px" }}>
-          {!selectedForum ? (
-            <ForumSelector
-              token={auth.access_token}
-              onSelectForum={(slug) => setSelectedForum(slug)}
-            />
+          {/* Simple Tab Navigation */}
+          <nav style={{ marginBottom: "20px" }}>
+            <button
+              onClick={() => setCurrentTab("explore")}
+              style={{
+                fontWeight: currentTab === "explore" ? "bold" : "normal",
+                marginRight: "10px",
+              }}
+            >
+              Explore Forums
+            </button>
+            <button
+              onClick={() => setCurrentTab("favorites")}
+              style={{
+                fontWeight: currentTab === "favorites" ? "bold" : "normal",
+              }}
+            >
+              Your Favorites
+            </button>
+          </nav>
+
+          {currentTab === "explore" ? (
+            !selectedForum ? (
+              <ForumSelector
+                token={auth.access_token}
+                onSelectForum={(slug) => setSelectedForum(slug)}
+              />
+            ) : (
+              <div>
+                <button onClick={() => setSelectedForum(null)}>← Back to Search</button>
+                <PostList token={auth.access_token} forumSlug={selectedForum} />
+              </div>
+            )
           ) : (
-            <div>
-              <button onClick={() => setSelectedForum(null)}>← Back to Search</button>
-              <PostList token={auth.access_token} forumSlug={selectedForum} />
-            </div>
+            <FavoritesView token={auth.access_token} />
           )}
         </div>
       )}
