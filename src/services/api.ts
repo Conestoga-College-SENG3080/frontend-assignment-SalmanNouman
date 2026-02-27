@@ -41,3 +41,23 @@ export const getProfile = async (token: string): Promise<UserProfile> => {
 
   return response.json();
 };
+
+export interface ForumDto {
+  id: string;
+  slug: string;
+  description: string;
+}
+
+export const searchForums = async (token: string, query: string): Promise<ForumDto[]> => {
+  const response = await fetch(`${API_URL}/forums/search?q=${encodeURIComponent(query)}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to search forums');
+  }
+
+  return response.json();
+};

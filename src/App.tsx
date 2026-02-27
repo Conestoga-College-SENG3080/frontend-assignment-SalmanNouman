@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { login, type LoginResponse } from "./services/api";
 import { Header } from "./components/Header";
+import { ForumSelector } from "./components/ForumSelector";
 
 function App() {
   const [auth, setAuth] = useState<LoginResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedForum, setSelectedForum] = useState<string | null>(null);
 
   useEffect(() => {
     // Hardcoded credentials as per discussed in class
@@ -33,8 +35,18 @@ function App() {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {auth && (
         <div style={{ padding: "0 20px" }}>
-          <p>Logged in as {auth.user.username}</p>
-          <p>Forum content placeholder.</p>
+          {!selectedForum ? (
+            <ForumSelector
+              token={auth.access_token}
+              onSelectForum={(slug) => setSelectedForum(slug)}
+            />
+          ) : (
+            <div>
+              <button onClick={() => setSelectedForum(null)}>← Back to Search</button>
+              <h3>Viewing r/{selectedForum}</h3>
+              <p>Post list will go here.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
