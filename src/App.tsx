@@ -4,6 +4,9 @@ import { ForumSelector } from "./components/ForumSelector";
 import { PostList } from "./components/PostList";
 import { FavoritesView } from "./components/FavoritesView";
 import { useAuth } from "./hooks/useAuth";
+import "./index.css";
+
+const POPULAR_FORUMS = ["funny", "todayilearned", "news", "worldnews", "gaming", "pics", "science", "movies", "music", "videos"];
 
 function App() {
   const { auth, error, loading } = useAuth();
@@ -11,14 +14,22 @@ function App() {
   const [currentTab, setCurrentTab] = useState<"explore" | "favorites">("explore");
 
   if (loading) {
-    return <div style={{ padding: "20px" }}>Authenticating...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mb-4"></div>
+        <p className="text-gray-600 font-medium">Authenticating with Creddit...</p>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div style={{ padding: "20px", color: "red" }}>
-        <h1>Error</h1>
-        <p>{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Authentication Error</h1>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <p className="text-sm text-gray-500">Please check your credentials in your useAuth.ts hook.</p>
+        </div>
       </div>
     );
   }
@@ -26,67 +37,83 @@ function App() {
   if (!auth) return null;
 
   return (
-    <div className="app-container">
+    <div className="min-h-screen bg-gray-100 font-sans text-gray-900 flex flex-col">
       <Header token={auth.access_token} />
 
-      <main style={{ padding: "0 20px" }}>
-        {/* Tab Navigation */}
-        <nav style={{ marginBottom: "20px", borderBottom: "1px solid #eee", paddingBottom: "10px" }}>
-          <button
-            onClick={() => setCurrentTab("explore")}
-            style={{
-              padding: "10px 20px",
-              cursor: "pointer",
-              background: currentTab === "explore" ? "#007bff" : "#fff",
-              color: currentTab === "explore" ? "#fff" : "#000",
-              border: "1px solid #007bff",
-              borderRadius: "4px 0 0 4px",
-              fontWeight: currentTab === "explore" ? "bold" : "normal",
-            }}
-          >
-            Explore Forums
-          </button>
-          <button
-            onClick={() => setCurrentTab("favorites")}
-            style={{
-              padding: "10px 20px",
-              cursor: "pointer",
-              background: currentTab === "favorites" ? "#007bff" : "#fff",
-              color: currentTab === "favorites" ? "#fff" : "#000",
-              border: "1px solid #007bff",
-              borderRadius: "0 4px 4px 0",
-              marginLeft: "-1px",
-              fontWeight: currentTab === "favorites" ? "bold" : "normal",
-            }}
-          >
-            Your Favorites
-          </button>
-        </nav>
-
-        {currentTab === "explore" ? (
-          !selectedForum ? (
-            <ForumSelector
-              token={auth.access_token}
-              onSelectForum={(slug) => setSelectedForum(slug)}
-            />
-          ) : (
-            <div>
+      <main className="flex flex-col md:flex-row max-w-6xl mx-auto w-full px-4 py-6 gap-6 grow">
+        {/* Sidebar / Left Column */}
+        <aside className="w-full md:w-64 flex flex-col gap-6 order-2 md:order-1">
+          <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-3 bg-blue-500 text-white font-bold text-sm uppercase">Navigation</div>
+            <div className="flex flex-col">
               <button
-                onClick={() => setSelectedForum(null)}
-                style={{
-                  marginBottom: "20px",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                }}
+                onClick={() => setCurrentTab("explore")}
+                className={`p-3 text-left hover:bg-gray-50 transition-colors border-l-4 ${currentTab === "explore" ? "border-orange-500 bg-blue-50 text-blue-600 font-bold" : "border-transparent text-gray-700"}`}
               >
-                ← Back to Search
+                Explore Forums
               </button>
-              <PostList token={auth.access_token} forumSlug={selectedForum} />
+              <button
+                onClick={() => setCurrentTab("favorites")}
+                className={`p-3 text-left hover:bg-gray-50 transition-colors border-l-4 ${currentTab === "favorites" ? "border-orange-500 bg-blue-50 text-blue-600 font-bold" : "border-transparent text-gray-700"}`}
+              >
+                Your Favorites
+              </button>
             </div>
-          )
-        ) : (
-          <FavoritesView token={auth.access_token} />
-        )}
+          </div>
+
+          <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-3 bg-gray-50 border-b border-gray-100 font-bold text-xs uppercase text-gray-500">Popular Communities</div>
+            <div className="flex flex-col">
+              {POPULAR_FORUMS.map((slug) => (
+                <button
+                  key={slug}
+                  onClick={() => {
+                    setSelectedForum(slug);
+                    setCurrentTab("explore");
+                  }}
+                  className={`p-2 text-left hover:bg-gray-50 transition-colors text-sm ${selectedForum === slug && currentTab === "explore" ? "text-blue-600 font-bold bg-blue-50" : "text-gray-800"}`}
+                >
+                  r/{slug}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* Content Area / Middle Column */}
+        <section className="flex-1 order-1 md:order-2 flex flex-col gap-4">
+          {currentTab === "explore" ? (
+            !selectedForum ? (
+              <div className="bg-white p-6 rounded shadow-sm border border-gray-200">
+                <ForumSelector
+                  token={auth.access_token}
+                  onSelectForum={(slug) => setSelectedForum(slug)}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <div className="bg-white p-3 rounded shadow-sm border border-gray-200 flex items-center gap-3">
+                  <button
+                    onClick={() => setSelectedForum(null)}
+                    className="text-blue-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-50 transition-colors"
+                  >
+                    ← Back to Search
+                  </button>
+                  <span className="text-gray-400">/</span>
+                  <h2 className="text-lg font-bold">r/{selectedForum}</h2>
+                </div>
+                <PostList token={auth.access_token} forumSlug={selectedForum} />
+              </div>
+            )
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="bg-white p-3 rounded shadow-sm border border-gray-200">
+                <h2 className="text-lg font-bold px-1">Your Favorites</h2>
+              </div>
+              <FavoritesView token={auth.access_token} />
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

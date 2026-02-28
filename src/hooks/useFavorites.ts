@@ -1,28 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const STORAGE_KEY = "creddit_favorites";
 
-export const useFavorites = () => {
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+const getInitialFavoriteIds = (): string[] => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    return [];
+  }
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setFavoriteIds(JSON.parse(stored));
-      } catch (err) {
-        console.error("Failed to parse favorites from storage:", err);
-      }
+  try {
+    const parsed: unknown = JSON.parse(stored);
+    if (!Array.isArray(parsed)) {
+      return [];
     }
-  }, []);
+
+    return parsed.filter((id): id is string => typeof id === "string");
+  } catch (err) {
+    console.error("Failed to parse favorites from storage:", err);
+    return [];
+  }
+};
+
+export const useFavorites = () => {
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(getInitialFavoriteIds);
 
   const toggleFavorite = (id: string) => {
-    const newFavorites = favoriteIds.includes(id)
-      ? favoriteIds.filter((favId) => favId !== id)
-      : [...favoriteIds, id];
+    setFavoriteIds((previousFavorites) => {
+      const newFavorites = previousFavorites.includes(id)
+        ? previousFavorites.filter((favId) => favId !== id)
+        : [...previousFavorites, id];
 
-    setFavoriteIds(newFavorites);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newFavorites));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newFavorites));
+      return newFavorites;
+    });
   };
 
   const isFavorite = (id: string) => favoriteIds.includes(id);

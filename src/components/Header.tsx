@@ -25,27 +25,36 @@ export const Header = ({ token }: HeaderProps) => {
     }
   }, [token]);
 
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
   return (
-    <header
-      style={{
-        borderBottom: "1px solid #ccc",
-        padding: "10px",
-        marginBottom: "20px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <h2 style={{ margin: 0 }}>Creddit App</h2>
-      <div>
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between shadow-sm">
+      <div className="flex items-center gap-2">
+        <div className="bg-orange-600 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm">
+          C
+        </div>
+        <h1 className="text-xl font-bold text-gray-900 hidden sm:block">Creddit</h1>
+      </div>
+
+      <div className="flex items-center gap-3">
         {error ? (
-          <span style={{ color: "red" }}>{error}</span>
+          <span className="text-red-500 text-sm">{error}</span>
         ) : profile ? (
-          <span>
-            Welcome, <strong>{profile.firstName} {profile.lastName}</strong> ({profile.username})
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-gray-700 font-medium text-sm hidden md:inline">
+              {profile.firstName} {profile.lastName}
+            </span>
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:bg-blue-700 transition-colors">
+              {getInitials(profile.firstName, profile.lastName)}
+            </div>
+          </div>
         ) : (
-          <span>Loading profile...</span>
+          <div className="animate-pulse flex items-center gap-3">
+            <div className="h-4 w-24 bg-gray-200 rounded"></div>
+            <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+          </div>
         )}
       </div>
     </header>
