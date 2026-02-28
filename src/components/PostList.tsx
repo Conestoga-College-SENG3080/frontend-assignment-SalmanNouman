@@ -1,12 +1,31 @@
+/**
+ * @file PostList.tsx
+ * @author Salman Nouman
+ * @date 2026-02-27
+ * @description Component that displays a list of posts for a specific forum with loading states, error handling, and favorite toggle functionality.
+ */
+
 import { usePosts } from "../hooks/usePosts";
 import { PostItem } from "./PostItem";
 import { useFavorites } from "../hooks/useFavorites";
 
+/**
+ * @interface PostListProps
+ * @description Props for the PostList component.
+ * @property {string} token - Authentication token for API requests.
+ * @property {string} forumSlug - The slug identifier of the forum to fetch posts from.
+ */
 interface PostListProps {
   token: string;
   forumSlug: string;
 }
 
+/**
+ * @function PostList
+ * @description Renders a list of posts for a given forum with loading skeleton, error display, and favorite toggle functionality.
+ * @param {PostListProps} props - Component props containing token and forum slug.
+ * @returns {JSX.Element} Rendered post list with loading and error states.
+ */
 export const PostList = ({ token, forumSlug }: PostListProps) => {
   const { posts, loading, error } = usePosts(token, forumSlug);
   const { isFavorite, toggleFavorite } = useFavorites();

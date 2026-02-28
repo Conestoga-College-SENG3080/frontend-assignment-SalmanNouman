@@ -1,4 +1,11 @@
-import { useState, useEffect } from "react";
+/**
+ * @file ForumSelector.tsx
+ * @author Salman Nouman
+ * @date 2026-02-27
+ * @description Component that displays a list of forums.
+ */
+
+import { useState, useEffect, type SubmitEventHandler } from "react";
 import { useForums } from "../hooks/useForums";
 
 interface ForumSelectorProps {

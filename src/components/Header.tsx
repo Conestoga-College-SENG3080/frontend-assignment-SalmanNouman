@@ -1,3 +1,10 @@
+/**
+ * @file Header.tsx
+ * @author Salman Nouman
+ * @date 2026-02-27
+ * @description Component that displays application header and user profile.
+ */
+
 import { useEffect, useState } from "react";
 import { getProfile, type UserProfile } from "../services/api";
 

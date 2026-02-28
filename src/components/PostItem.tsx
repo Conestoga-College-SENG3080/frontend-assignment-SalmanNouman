@@ -1,3 +1,10 @@
+/**
+ * @file PostItem.tsx
+ * @author Salman Nouman
+ * @date 2026-02-27
+ * @description Component that displays a single post with loading states, error handling, and favorite toggle functionality.
+ */
+
 import { type PostDto } from "../services/api";
 
 interface PostItemProps {
@@ -16,11 +23,10 @@ export const PostItem = ({ post, isFavorite, onToggleFavorite }: PostItemProps) 
           </div>
           <button
             onClick={() => onToggleFavorite(post.id)}
-            className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium transition-colors ${
-              isFavorite
-                ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
-            }`}
+            className={`flex items-center gap-2 px-3 py-1 rounded text-sm font-medium transition-colors ${isFavorite
+              ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+              }`}
           >
             <span className={isFavorite ? "text-yellow-500 text-lg" : "text-gray-400 text-lg"}>
               {isFavorite ? "★" : "☆"}
@@ -30,7 +36,7 @@ export const PostItem = ({ post, isFavorite, onToggleFavorite }: PostItemProps) 
         </div>
 
         <h4 className="text-lg font-bold text-gray-900 leading-tight">{post.title}</h4>
-        
+
         <div className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed py-1 line-clamp-6">
           {post.content}
         </div>

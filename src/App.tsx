@@ -1,3 +1,10 @@
+/**
+ * @file App.tsx
+ * @author Salman Nouman
+ * @date 2026-02-26
+ * @description Main application component that handles authentication, navigation between forums and favorites views, and renders the overall layout including header, sidebar, and content areas.
+ */
+
 import { useState } from "react";
 import { Header } from "./components/Header";
 import { ForumSelector } from "./components/ForumSelector";
@@ -8,6 +15,11 @@ import "./index.css";
 
 const POPULAR_FORUMS = ["funny", "todayilearned", "news", "worldnews", "gaming", "pics", "science", "movies", "music", "videos"];
 
+/**
+ * @function App
+ * @description Renders the main application layout with authentication state handling, navigation between explore and favorites tabs, forum selection, and post display.
+ * @returns {JSX.Element | null} The main application UI or null if not authenticated.
+ */
 function App() {
   const { auth, error, loading } = useAuth();
   const [selectedForum, setSelectedForum] = useState<string | null>(null);

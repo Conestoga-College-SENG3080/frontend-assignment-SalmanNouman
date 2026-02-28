@@ -1,3 +1,10 @@
+/**
+ * @file FavoritesView.tsx
+ * @author Salman Nouman
+ * @date 2026-02-27
+ * @description Component that displays a list of favorited posts.
+ */
+
 import { usePosts } from "../hooks/usePosts";
 import { PostItem } from "./PostItem";
 import { useFavorites } from "../hooks/useFavorites";
