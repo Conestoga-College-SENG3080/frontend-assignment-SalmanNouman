@@ -18,7 +18,7 @@ export const ForumSelector = ({ token, onSelectForum }: ForumSelectorProps) => {
     }
   }, [query, hasSearched, clearResults]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     search(query);
   };
