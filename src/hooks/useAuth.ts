@@ -1,7 +1,7 @@
 /**
  * @file useAuth.ts
  * @author Salman Nouman
- * @date 2025-02-20
+ * @date 2026-02-27
  * @description Custom hook that handles authentication with hardcoded credentials, managing auth state, loading, and error states.
  */
 

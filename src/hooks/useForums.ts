@@ -1,7 +1,7 @@
 /**
  * @file useForums.ts
  * @author Salman Nouman
- * @date 2025-02-20
+ * @date 2026-02-27
  * @description Custom hook that manages forum search functionality, including search state, results, loading, error handling, and clearing results.
  */
 
